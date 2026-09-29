@@ -28,9 +28,9 @@ CREATE WIDGET TEXT volume DEFAULT 'workshop_data';
 
 -- COMMAND ----------
 
-CREATE SCHEMA IF NOT EXISTS ${catalog}.${schema};
+CREATE SCHEMA IF NOT EXISTS IDENTIFIER(:catalog || '.' || :schema);
 
-CREATE VOLUME IF NOT EXISTS ${catalog}.${schema}.${volume};
+CREATE VOLUME IF NOT EXISTS IDENTIFIER(:catalog || '.' || :schema || '.' || :volume);
 
 -- COMMAND ----------
 
@@ -60,7 +60,7 @@ LIST '/Volumes/${catalog}/${schema}/${volume}/';
 
 -- COMMAND ----------
 
-CREATE TABLE IF NOT EXISTS ${catalog}.${schema}.complaints (
+CREATE TABLE IF NOT EXISTS IDENTIFIER(:catalog || '.' || :schema || '.complaints') (
   complaint_id STRING,
   date_received STRING,
   product STRING,
@@ -106,12 +106,12 @@ COPY_OPTIONS ('mergeSchema' = 'true');
 
 -- COMMAND ----------
 
-SELECT COUNT(*) AS total_rows FROM ${catalog}.${schema}.complaints;
+SELECT COUNT(*) AS total_rows FROM IDENTIFIER(:catalog || '.' || :schema || '.complaints');
 
 -- COMMAND ----------
 
 SELECT product, COUNT(*) AS complaint_count
-FROM ${catalog}.${schema}.complaints
+FROM IDENTIFIER(:catalog || '.' || :schema || '.complaints')
 GROUP BY product
 ORDER BY complaint_count DESC;
 
@@ -119,7 +119,7 @@ ORDER BY complaint_count DESC;
 
 -- A handful of raw narratives, just to see what we're working with
 SELECT complaint_id, product, narrative
-FROM ${catalog}.${schema}.complaints
+FROM IDENTIFIER(:catalog || '.' || :schema || '.complaints')
 WHERE narrative IS NOT NULL
 LIMIT 5;
 
