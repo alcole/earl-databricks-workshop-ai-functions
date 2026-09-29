@@ -152,4 +152,5 @@ FROM summarized;
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC Next: **03_pipelines_jobs.sql** — turning these one-off queries into a scheduled pipeline.
+-- MAGIC Next: **03_document_exploration.sql** — running these same kinds of AI functions over
+-- MAGIC unstructured documents (PDFs) instead of just text columns.
