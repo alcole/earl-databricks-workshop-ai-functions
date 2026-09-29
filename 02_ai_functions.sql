@@ -54,7 +54,7 @@ SELECT
       'Other'
     )
   ) AS category
-FROM ${catalog}.${schema}.complaints
+FROM IDENTIFIER(:catalog || '.' || :schema || '.complaints')
 LIMIT 15;
 
 -- COMMAND ----------
@@ -74,7 +74,7 @@ SELECT
     narrative,
     ARRAY('company name mentioned', 'dollar amount mentioned', 'date mentioned')
   ) AS extracted_fields
-FROM ${catalog}.${schema}.complaints
+FROM IDENTIFIER(:catalog || '.' || :schema || '.complaints')
 LIMIT 15;
 
 -- COMMAND ----------
@@ -91,7 +91,7 @@ SELECT
   complaint_id,
   product,
   ai_summarize(narrative, 40) AS narrative_summary
-FROM ${catalog}.${schema}.complaints
+FROM IDENTIFIER(:catalog || '.' || :schema || '.complaints')
 LIMIT 15;
 
 -- COMMAND ----------
@@ -115,7 +115,7 @@ SELECT
   complaint_id,
   narrative
   -- , ai_classify(narrative, ARRAY( /* your labels here */ )) AS my_category
-FROM ${catalog}.${schema}.complaints
+FROM IDENTIFIER(:catalog || '.' || :schema || '.complaints')
 LIMIT 10;
 
 -- COMMAND ----------
@@ -139,7 +139,7 @@ WITH summarized AS (
     complaint_id,
     product,
     ai_summarize(narrative, 40) AS narrative_summary
-  FROM ${catalog}.${schema}.complaints
+  FROM IDENTIFIER(:catalog || '.' || :schema || '.complaints')
   LIMIT 15
 )
 SELECT
