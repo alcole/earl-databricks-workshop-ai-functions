@@ -10,6 +10,8 @@ Materials for a Databricks AI Functions workshop: sample datasets and a set of h
 notebooks covering `ai_classify`, `ai_extract`, `ai_summarize`, `ai_parse_document`, and wiring
 one of those queries up to a Job.
 
+Reference: [Databricks AI Functions documentation](https://docs.databricks.com/aws/en/large-language-models/ai-functions)
+
 ## Get a workspace
 
 You need a Databricks workspace to run these notebooks. If you don't already have one, sign up
