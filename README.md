@@ -1,3 +1,9 @@
+<p align="center">
+  <img src="horizontal_tight_plain_light.png" alt="Kubrick Group × Databricks" height="60">
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="earl-logo-1-on-dark.png" alt="EARL Conference" height="60">
+</p>
+
 # earl-databricks-workshop-ai-functions
 
 Materials for a Databricks AI Functions workshop: sample datasets and a set of hands-on SQL
