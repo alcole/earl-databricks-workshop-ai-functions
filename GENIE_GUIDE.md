@@ -47,3 +47,7 @@ hypothetical, the numbers above are verified. One thing worth knowing: since thi
 the one `complaints` table, none of the above involve an actual SQL `JOIN` — they're all
 filter/aggregate patterns. If you want to demo a real join live, add a second table to the space
 first.
+
+## Reference
+
+[Curate an effective Genie Agent](https://docs.databricks.com/aws/en/genie-agents/best-practices) — Databricks' own best-practices doc (table/column descriptions, example SQL, and instructions all help Genie answer better; "Genie Agents" is the current name for what used to be called "Genie Spaces").
