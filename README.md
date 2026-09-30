@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="horizontal_tight_plain_light.png" alt="Kubrick Group × Databricks" height="60">
+  <img src="horizontal_tight_plain_light.png" alt="Kubrick Group × Databricks" height="80">
   &nbsp;&nbsp;&nbsp;&nbsp;
   <img src="earl-logo-1-on-dark.png" alt="EARL Conference" height="60">
 </p>
