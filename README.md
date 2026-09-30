@@ -34,6 +34,9 @@ Run in order:
 4. **`04_pipelines_jobs.sql`** *(optional)* — automates one of the AI function queries via a
    Databricks Job; try this in your own time if the session runs out
 
+After the notebooks, there's a UI-only activity (no notebook): see **[GENIE_GUIDE.md](GENIE_GUIDE.md)**
+to build a Genie space over `main.workshop.complaints` and ask it questions in plain English.
+
 ## Datasets
 
 - [`complaints_sample.csv`](complaints_sample.csv) — 831 consumer complaint records with narratives, stratified across 11 CFPB product categories
