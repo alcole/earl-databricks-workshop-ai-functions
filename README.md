@@ -41,8 +41,14 @@ Run in order:
 
 ## Running a notebook
 
-Download the `.sql` file from this repo, then either:
-- **Import it**: in your workspace, **Workspace → Import**, upload the file (format: `Source`), or
+**Recommended — clone the whole repo via Git folders:** in your workspace sidebar, **Workspace →
+Add → Add a Git folder**, paste `https://github.com/alcole/earl-databricks-workshop-ai-functions`,
+and clone. All four notebooks and both datasets land in your workspace at once, and you can
+**Pull** later to grab any updates — no need to download or import anything by hand.
+
+Or, to grab just one notebook:
+- **Import it**: download the `.sql` file from this repo, then in your workspace **Workspace →
+  Import**, upload it (format: `Source`)
 - **Copy-paste**: open a new notebook and paste the cells in directly
 
 ## Data sources & attribution
