@@ -1,0 +1,20 @@
+{
+  "name": "earl-databricks-workshop-ai-functions-deck",
+  "version": "1.0.0",
+  "description": "Presenter slide deck for the Databricks AI Functions workshop at EARL Conference",
+  "private": true,
+  "scripts": {
+    "deck:watch": "marp --theme theme.css -w slides.md",
+    "deck:html": "marp --theme theme.css --allow-local-files slides.md -o slides.html",
+    "deck:pdf": "marp --theme theme.css --allow-local-files --pdf slides.md -o dist/slides.pdf",
+    "deck:pptx": "marp --theme theme.css --allow-local-files --pptx slides.md -o dist/slides.pptx"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alcole/earl-databricks-workshop-ai-functions.git"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "@marp-team/marp-cli": "^4.5.1"
+  }
+}
