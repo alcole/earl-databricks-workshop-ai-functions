@@ -37,6 +37,17 @@ Run in order:
 After the notebooks, there's a UI-only activity (no notebook): see **[GENIE_GUIDE.md](GENIE_GUIDE.md)**
 to build a Genie space over `main.workshop.complaints` and ask it questions in plain English.
 
+## Other resources
+
+[`other-resources/`](other-resources) holds material that isn't part of the Free Edition
+hands-on path above — mainly because it needs a full Databricks workspace rather than Free
+Edition. Not required to follow along, but worth a look afterwards:
+
+- **`r_demo_ai_functions.r`** — calls the same AI functions from R via the SQL Statement
+  Execution API, run on a standard paid workspace (R isn't supported on Free Edition)
+- *(planned)* an API → governed table demo, showing what landing data through a governed
+  Unity Catalog table buys you over raw API ingestion — also not doable on Free Edition
+
 ## Datasets
 
 - [`complaints_sample.csv`](complaints_sample.csv) — 831 consumer complaint records with narratives, stratified across 11 CFPB product categories

@@ -26,3 +26,18 @@ invoice_test_extract/
 invoices_pdf/
 complaints_dashboard.json
 run_doc_exploration_job.json
+
+# Environment leakage — $HOME appears to be pointed at this repo in this
+# sandbox, so shell/editor/tool dotfiles show up here. Never commit these.
+.bash_profile
+.bashrc
+.profile
+.zprofile
+.zshrc
+.gitconfig
+.gitmodules
+.mcp.json
+.ripgreprc
+.idea
+.vscode
+.claude/
