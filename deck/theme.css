@@ -1,0 +1,262 @@
+/* @theme kubrick */
+@import 'default';
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --color-sequoia-mid: #223536;
+  --color-sequoia-dark: #062721;
+  --color-stinson-sand: #EEE4DC;
+  --color-stone-white: #F2F5F4;
+  --color-marin-green: #14F279;
+
+  --font-display: 'Source Serif 4', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+section {
+  font-family: var(--font-body);
+  background: var(--color-stone-white);
+  color: var(--color-sequoia-dark);
+  padding: 56px 68px;
+  font-size: 26px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  color: var(--color-sequoia-dark);
+  font-weight: 700;
+  margin-top: 0;
+}
+
+h1 { font-size: 2.2em; }
+
+h2 {
+  font-size: 1.5em;
+  display: inline-block;
+  border-bottom: 5px solid var(--color-marin-green);
+  padding-bottom: 0.15em;
+}
+
+h3 { font-size: 1.15em; font-family: var(--font-body); font-weight: 600; }
+
+a { color: var(--color-sequoia-mid); }
+
+strong { color: var(--color-sequoia-mid); }
+
+ul, ol { line-height: 1.5; }
+
+li::marker { color: var(--color-marin-green); }
+
+blockquote {
+  border-left: 5px solid var(--color-marin-green);
+  background: var(--color-stinson-sand);
+  padding: 0.6em 1em;
+  margin: 0.5em 0;
+  font-size: 0.85em;
+}
+
+code {
+  font-family: 'SFMono-Regular', Consolas, Menlo, monospace;
+  background: var(--color-stinson-sand);
+  color: var(--color-sequoia-dark);
+  border-radius: 4px;
+  padding: 0.1em 0.4em;
+  font-size: 0.85em;
+}
+
+pre {
+  background: var(--color-sequoia-dark);
+  border-radius: 10px;
+  padding: 0.8em 1em;
+}
+
+pre code {
+  background: none;
+  color: var(--color-stone-white);
+  padding: 0;
+}
+
+table {
+  font-size: 0.75em;
+}
+
+th {
+  background: var(--color-sequoia-dark);
+  color: var(--color-stone-white);
+}
+
+/* ---------- Title slide ---------- */
+section.lead {
+  background: var(--color-sequoia-dark);
+  color: var(--color-stone-white);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+section.lead h1 {
+  color: var(--color-stone-white);
+  font-size: 2.3em;
+  margin-top: 0.4em;
+}
+
+section.lead p {
+  color: var(--color-stinson-sand);
+  font-size: 1.1em;
+}
+
+section.lead .logo-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+}
+
+section.lead .logo-row img {
+  display: block;
+}
+
+/* ---------- Section divider slides ---------- */
+section.divider {
+  background: var(--color-sequoia-dark);
+  color: var(--color-stone-white);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+section.divider h2 {
+  color: var(--color-stone-white);
+  border: none;
+  font-size: 2em;
+  padding-bottom: 0;
+}
+
+section.divider .eyebrow {
+  color: var(--color-marin-green);
+  font-family: var(--font-body);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.55em;
+  margin-bottom: 0.4em;
+}
+
+section.divider .mode-tag {
+  color: var(--color-stinson-sand);
+  font-size: 0.6em;
+  font-weight: 500;
+}
+
+/* ---------- Shared brand footer mark ---------- */
+section.brand-footer::after {
+  content: '';
+  position: absolute;
+  bottom: 22px;
+  right: 68px;
+  width: 140px;
+  height: 34px;
+  background-image: url('../brand/horizontal_tight_plain_dark.png');
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: contain;
+  opacity: 0.85;
+}
+
+/* ---------- Visible URL callout (for live/projected talks — no clickable links in the room) ---------- */
+.url-callout {
+  background: var(--color-sequoia-dark);
+  color: var(--color-stone-white);
+  display: inline-block;
+  padding: 0.3em 0.6em;
+  border-radius: 8px;
+  font-family: 'SFMono-Regular', Consolas, Menlo, monospace;
+  font-size: 0.85em;
+  letter-spacing: 0.01em;
+}
+
+.url-callout a {
+  color: var(--color-stone-white);
+  text-decoration: none;
+}
+
+/* ---------- Callout box ---------- */
+section.callout {
+  background: var(--color-stinson-sand);
+}
+
+/* ---------- Two-column layout helper ---------- */
+.columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2em;
+  align-items: center;
+}
+
+.columns.columns-skewed {
+  grid-template-columns: 2fr 3fr;
+}
+
+/* ---------- Step-by-step screenshot strip ---------- */
+.screenshot-strip {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 1.5em;
+  margin: 0.4em 0 0.6em;
+}
+
+.screenshot-strip figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.screenshot-strip img {
+  max-height: 230px;
+  max-width: 100%;
+  width: auto;
+  border: 1px solid var(--color-stinson-sand);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(6, 39, 33, 0.15);
+}
+
+.screenshot-strip img.lg {
+  max-height: 300px;
+}
+
+.screenshot-strip figcaption {
+  margin-top: 0.4em;
+  font-size: 0.6em;
+  font-weight: 600;
+  color: var(--color-sequoia-mid);
+  text-align: center;
+}
+
+/* ---------- Wide/landscape screenshots ---------- */
+.screenshot-wide {
+  display: block;
+  max-height: 320px;
+  width: auto;
+  max-width: 100%;
+  margin: 0.3em auto 0.6em;
+  border: 1px solid var(--color-stinson-sand);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(6, 39, 33, 0.15);
+}
+
+/* ---------- Tall/narrow screenshots (e.g. sidebar nav) ---------- */
+.screenshot-tall {
+  display: block;
+  max-height: 640px;
+  width: auto;
+  max-width: 100%;
+  margin: 0 auto;
+  border: 1px solid var(--color-stinson-sand);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(6, 39, 33, 0.15);
+}

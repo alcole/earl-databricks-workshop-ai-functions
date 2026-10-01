@@ -1,0 +1,28 @@
+node_modules/
+deck/dist/
+deck/slides.html
+.browsers/
+
+# Internal planning docs — not for the public repo
+Workshop-Agenda.md
+slide-content-list.md
+
+# Unused brand assets — only the 4 files actually referenced by README/deck are tracked.
+# Keep the rest local for future use, but don't publish Kubrick's internal brand kit wholesale.
+brand/kubrick-design-system.md
+brand/databricks_allwhite_transparent.png
+brand/databricks_black_transparent.png
+brand/databricks_white_transparent.png
+brand/horizontal_centred_plain_dark.png
+brand/kubrick_ink_transparent.png
+brand/kubrick_white_transparent.png
+brand/stacked_plain_dark.png
+
+# Local working/scratch data — not repo deliverables
+consumer_complaints.csv
+consumer_complaints.csv:Zone.Identifier
+batch1_1/
+invoice_test_extract/
+invoices_pdf/
+complaints_dashboard.json
+run_doc_exploration_job.json
