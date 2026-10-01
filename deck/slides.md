@@ -44,6 +44,36 @@ EARL Conference 2026 · Kubrick Group × Databricks
 
 ---
 
+<!-- _class: brand-footer -->
+
+## Who we are
+
+Kubrick Group
+
+<div class="people-row">
+  <div class="person">
+    <img class="person-photo" src="headshots/alex.jpg" alt="Alex Cole">
+    <div class="person-name">Alex Cole</div>
+    <div class="person-title">Principal Architect, Databricks MVP</div>
+    <div class="person-title"><a href="https://www.linkedin.com/in/alexcole01">LinkedIn</a></div>
+  </div>
+  <div class="person">
+    <img class="person-photo" src="headshots/ian.jpg" alt="Ian Payne">
+    <div class="person-name">Ian Payne</div>
+    <div class="person-title">Databricks Capability Lead</div>
+  </div>
+  <div class="person">
+    <img class="person-photo" src="headshots/andres.jpg" alt="Andres Baravalle">
+    <div class="person-name">Andres Baravalle</div>
+    <div class="person-title">Senior Data Engineering Manager</div>
+    <div class="person-title"><a href="https://www.linkedin.com/in/baravalle/">LinkedIn</a></div>
+  </div>
+</div>
+
+<p class="shoutout">Catch Andres on 8th October (day 2): <strong><a href="https://earl-conference.com/speakers/Andres-Baravalle/">"Is Someone Poisoning Your Data?"</a></strong> — 11:00am</p>
+
+---
+
 <!-- _class: divider -->
 
 <div class="eyebrow">9:00 – 9:25</div>
@@ -150,6 +180,36 @@ Use those defaults — no editing required. Just **Run All**.
 
 <!-- _class: brand-footer -->
 
+## Before we start: meet Genie Code
+
+<div class="columns">
+<div>
+
+<img class="screenshot-tall" src="screenshots/open-genie.png" alt="Opening the Genie Code chat pane">
+
+</div>
+<div>
+
+Stuck on an exercise today? **Genie Code** is Databricks' built-in AI coding assistant —
+available right inside notebooks and the SQL editor.
+
+- Click the Genie icon in the top-right corner of any page to open the chat pane
+- Ask it to explain an error, fix a query, or describe what a cell does
+- Governed by the same Unity Catalog permissions as everything else — it only sees what you can see
+
+Not required today, but there if you want it.
+
+</div>
+</div>
+
+<!-- Speaker note: disambiguate from Genie Agents (Block 5) if asked — Genie Code is the
+dev-assistant for notebooks/SQL editor; Genie Agents is the natural-language Q&A space we
+build over the complaints table later. Same "Genie" branding, different products. -->
+
+---
+
+<!-- _class: brand-footer -->
+
 ## Import today's materials
 
 <div class="screenshot-strip">
@@ -236,6 +296,20 @@ SELECT ai_<function>(column, ...) FROM my_table;
 - Runs row by row over a text column
 - Three functions today: **`ai_classify`**, **`ai_extract`**, **`ai_summarize`**
 - Hands-on companion: `02_ai_functions.sql`, against the `complaints` table from Block 2
+
+---
+
+<!-- _class: brand-footer -->
+
+## Three functions, three jobs
+
+| Function | What it does |
+|---|---|
+| **`ai_classify`** | Sorts free text into one of a fixed list of labels you provide |
+| **`ai_extract`** | Pulls named fields out of free text into a struct |
+| **`ai_summarize`** | Condenses free text to a shorter summary, optionally word-capped |
+
+One line of SQL each — the next few slides show them against real complaint narratives.
 
 ---
 
@@ -360,7 +434,77 @@ Reasoning over a few words is cheaper and faster than re-running against the ful
 
 <div class="mode-tag">Demo · Light hands-on</div>
 
-<!-- TODO: port example questions + dashboard content from GENIE_GUIDE.md -->
+---
+
+<!-- _class: brand-footer -->
+
+## Ask your data questions in plain English
+
+Genie is a click-through, no-SQL way to query a table — point it at data once, then just type questions.
+
+- No notebook for this one — everything happens in the Databricks UI
+- Needs `main.workshop.complaints` to exist, so **`01_ingest_data.sql`** must have run first
+- Under the hood it's still writing and running SQL — Genie shows you the query it used
+
+---
+
+<!-- _class: brand-footer -->
+
+## Create your Genie space
+
+1. Sidebar: **New** → **Genie space**
+2. Title it, e.g. `Complaints Explorer`
+3. **Add tables** → browse to `main` → `workshop` → `complaints` → add it
+4. Pick the SQL warehouse you've used all day
+5. **Create** — a chat panel opens
+
+<!-- TODO: screenshot — Genie space creation / chat panel -->
+
+---
+
+<!-- _class: brand-footer -->
+
+## Try it yourself
+
+Four questions, verified against a real space — not hypothetical:
+
+1. **"How many complaints are in this table?"** — sanity check. Answer: **831**
+2. **"Which company received the most complaints, and how many?"** — Answer: **Experian, 55**
+3. **"Which state has the most billing dispute complaints?"** — Genie has to recognize
+   "billing dispute(s)" as a real `issue` value, then group and rank by state. Answer: **NY, 4**
+4. **"Break down complaint counts by product for California only, highest first"** — filter +
+   aggregate across two columns; usually renders a chart. Answer: **Mortgage (37), Debt
+   collection (25), Credit reporting (16)...**
+
+---
+
+<!-- _class: brand-footer -->
+
+## If you get stuck
+
+- **Empty or generic answer** — double-check you added `main.workshop.complaints`, not a
+  different catalog/schema
+- **A question about "categories" comes back empty** — there's no pre-computed category
+  column; ask about `product` or `issue` instead, or run `02_ai_functions.sql`'s classify
+  query first
+- None of today's questions need a SQL `JOIN` — this space only has the one table
+
+---
+
+<!-- _class: brand-footer -->
+
+## The presenter's dashboard
+
+<!-- TODO: screenshot — published dashboard -->
+
+A Lakeview/AI-BI dashboard built the same way you'd build one over any governed table:
+
+- **3 KPI counters** — total complaints, distinct companies, distinct states
+- **Monthly trend** — complaints received per month
+- **By product** — which categories complain most
+- **Top 10 companies** — by complaint count
+
+Built directly against `main.workshop.complaints` — no new notebook, no new pipeline.
 
 ---
 

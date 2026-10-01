@@ -260,3 +260,55 @@ section.callout {
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(6, 39, 33, 0.15);
 }
+
+/* ---------- People cards (e.g. "Who we are") ---------- */
+.people-row {
+  display: flex;
+  justify-content: center;
+  gap: 2.5em;
+  margin-top: 0.6em;
+}
+
+.people-row .person {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+  max-width: 220px;
+}
+
+.person-photo {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--color-marin-green);
+  box-shadow: 0 2px 10px rgba(6, 39, 33, 0.15);
+}
+
+.person-photo.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-sequoia-mid);
+  color: var(--color-stone-white);
+  font-family: var(--font-display);
+  font-size: 2.2em;
+  font-weight: 700;
+}
+
+.person-name {
+  margin-top: 0.6em;
+  font-weight: 700;
+  font-size: 0.85em;
+}
+
+.person-title {
+  color: var(--color-sequoia-mid);
+  font-size: 0.65em;
+}
+
+.shoutout {
+  margin-top: 1.4em;
+}
