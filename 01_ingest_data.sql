@@ -40,7 +40,9 @@ CREATE VOLUME IF NOT EXISTS IDENTIFIER(:catalog || '.' || :schema || '.' || :vol
 
 -- COMMAND ----------
 
-LIST '/Volumes/${catalog}/${schema}/${volume}/';
+-- MAGIC %python
+-- MAGIC path = f"/Volumes/{dbutils.widgets.get('catalog')}/{dbutils.widgets.get('schema')}/{dbutils.widgets.get('volume')}/"
+-- MAGIC display(dbutils.fs.ls(path))
 
 -- COMMAND ----------
 

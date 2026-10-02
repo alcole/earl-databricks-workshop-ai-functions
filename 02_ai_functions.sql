@@ -106,7 +106,11 @@ LIMIT 15;
 -- MAGIC - Extract a different field, e.g. `'phone number mentioned'` or `'name of the company representative'`
 -- MAGIC - Summarize with a tighter word limit, e.g. `ai_summarize(narrative, 15)`, and see how much detail survives
 -- MAGIC
--- MAGIC Fill in the `-- TODO` below and run it.
+-- MAGIC Fill in the `-- TODO` below and run it — or, if you'd rather explore with autocomplete and
+-- MAGIC a schema browser, open **`sql_editor_explore.sql`** (same exercise) in the **SQL editor**
+-- MAGIC instead: sidebar → SQL Editor → open the workspace file browser → navigate to this file in
+-- MAGIC the Git folder you cloned. The `:catalog` / `:schema` markers show up as fill-in widgets there
+-- MAGIC too, same as in this notebook.
 
 -- COMMAND ----------
 
