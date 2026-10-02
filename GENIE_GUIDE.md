@@ -1,15 +1,20 @@
-# Genie: ask `main.workshop.complaints` questions in plain English
+# Genie Agent: ask `main.workshop.complaints` questions in plain English
 
 Genie is a click-through, no-SQL way to ask natural-language questions of a table — you point
 it at data once, then just type questions. This activity isn't a notebook; everything happens in
 the Databricks UI. Complete `01_ingest_data.sql` first so `main.workshop.complaints` exists.
 
-## Create your Genie space
+(Databricks recently renamed this feature from "Genie Space" to **Genie Agent** — same thing,
+newer name. You may still see "Genie Space" in older screenshots or docs.)
 
-1. In the left sidebar, click **New** → **Genie space** (older UI: search "Genie" in the sidebar
-   search box if you don't see it directly).
+## Create your Genie Agent
+
+![Where to click to create a Genie Agent](deck/screenshots/GenieAgent.png)
+
+1. In the left sidebar, click **+ New** → **Genie Agent** (older UI: **New** → **Genie space**;
+   or search "Genie" in the sidebar search box if you don't see it directly).
 2. Give it a title, e.g. `Complaints Explorer`.
-3. Under the space's data sources, click **Add tables** / **Add data**, and browse to
+3. Under the agent's data sources, click **Add tables** / **Add data**, and browse to
    catalog `main` → schema `workshop` → table `complaints`. Add it.
 4. Pick the SQL warehouse you've been using for the rest of the workshop.
 5. Click **Create** (or **Save**).
@@ -17,10 +22,10 @@ the Databricks UI. Complete `01_ingest_data.sql` first so `main.workshop.complai
 
 ## Troubleshooting
 
-- **"tables must be sorted by identifier" error** — this only happens if a Genie space is
+- **"tables must be sorted by identifier" error** — this only happens if a Genie Agent is
   created or updated via the REST API/CLI with more than one table listed out of alphabetical
   order. You won't hit this clicking through the UI with a single table; it only matters if you
-  (or the presenter) later manage a space programmatically — in that case, list tables
+  (or the presenter) later manage an agent programmatically — in that case, list tables
   alphabetically by full name (`catalog.schema.table`).
 - **Genie can't find the table / gives an empty or generic answer** — double-check you added
   `main.workshop.complaints` specifically, not a different catalog/schema. Use whatever
@@ -42,12 +47,12 @@ the Databricks UI. Complete `01_ingest_data.sql` first so `main.workshop.complai
    plus an aggregation across two columns; Genie typically also renders a chart for this one.
    Answer: Mortgage (37), Debt collection (25), Credit reporting (16), ...
 
-All four were run against a real test space before writing this guide — these aren't
-hypothetical, the numbers above are verified. One thing worth knowing: since this space only has
+All four were run against a real test agent before writing this guide — these aren't
+hypothetical, the numbers above are verified. One thing worth knowing: since this agent only has
 the one `complaints` table, none of the above involve an actual SQL `JOIN` — they're all
-filter/aggregate patterns. If you want to demo a real join live, add a second table to the space
+filter/aggregate patterns. If you want to demo a real join live, add a second table to the agent
 first.
 
 ## Reference
 
-[Curate an effective Genie Agent](https://docs.databricks.com/aws/en/genie-agents/best-practices) — Databricks' own best-practices doc (table/column descriptions, example SQL, and instructions all help Genie answer better; "Genie Agents" is the current name for what used to be called "Genie Spaces").
+[Curate an effective Genie Agent](https://docs.databricks.com/aws/en/genie-agents/best-practices) — Databricks' own best-practices doc (table/column descriptions, example SQL, and instructions all help Genie answer better).

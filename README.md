@@ -35,7 +35,7 @@ Run in order:
    Databricks Job; try this in your own time if the session runs out
 
 After the notebooks, there's a UI-only activity (no notebook): see **[GENIE_GUIDE.md](GENIE_GUIDE.md)**
-to build a Genie space over `main.workshop.complaints` and ask it questions in plain English.
+to build a Genie Agent over `main.workshop.complaints` and ask it questions in plain English.
 
 ## Other resources
 

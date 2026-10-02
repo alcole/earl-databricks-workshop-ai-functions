@@ -68,6 +68,10 @@ pre {
   background: var(--color-sequoia-dark);
   border-radius: 10px;
   padding: 0.8em 1em;
+  /* Marp's bundled syntax highlighter uses GitHub's light-dark() color pairs, which default to
+     the light-mode half (e.g. dark navy blue strings) unless this scope is told it's dark —
+     without this, syntax-highlighted text is unreadable against this dark background. */
+  color-scheme: dark;
 }
 
 pre code {
@@ -150,19 +154,25 @@ section.divider .mode-tag {
   font-weight: 500;
 }
 
-/* ---------- Shared brand footer mark ---------- */
-section.brand-footer::after {
+/* ---------- Shared brand mark ---------- */
+/* Uses ::before (not ::after) deliberately — Marp's own page-number counter is rendered via
+   section::after, so sharing that pseudo-element clashes with it. */
+section.brand-footer::before {
   content: '';
   position: absolute;
-  bottom: 22px;
-  right: 68px;
-  width: 140px;
-  height: 34px;
+  top: 18px;
+  right: 24px;
+  width: 130px;
+  height: 32px;
+  background-color: var(--color-stone-white);
   background-image: url('../brand/horizontal_tight_plain_dark.png');
   background-repeat: no-repeat;
-  background-position: right center;
+  background-position: center;
   background-size: contain;
-  opacity: 0.85;
+  background-origin: content-box;
+  padding: 6px 10px;
+  border-radius: 6px;
+  box-shadow: 0 1px 6px rgba(6, 39, 33, 0.2);
 }
 
 /* ---------- Visible URL callout (for live/projected talks — no clickable links in the room) ---------- */
@@ -311,4 +321,113 @@ section.callout {
 
 .shoutout {
   margin-top: 1.4em;
+}
+
+/* ---------- Architecture funnel (sources -> ingestion options -> governed table -> consumers) ---------- */
+.arch-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  margin-top: 0.4em;
+}
+
+.arch-row {
+  border-radius: 8px;
+  padding: 0.5em 0.9em;
+  font-size: 0.65em;
+  text-align: center;
+}
+
+.arch-row.sources,
+.arch-row.neutral {
+  background: var(--color-stinson-sand);
+  color: var(--color-sequoia-dark);
+}
+
+.arch-options {
+  display: flex;
+  gap: 0.6em;
+}
+
+.arch-options .arch-option {
+  flex: 1;
+  background: var(--color-stone-white);
+  border: 2px solid var(--color-sequoia-mid);
+  border-radius: 8px;
+  padding: 0.5em 0.4em;
+  font-size: 0.65em;
+  text-align: center;
+  font-weight: 600;
+  color: var(--color-sequoia-mid);
+}
+
+.arch-row.governed {
+  background: var(--color-sequoia-dark);
+  color: var(--color-stone-white);
+  font-weight: 700;
+}
+
+.arch-row.consumers {
+  background: var(--color-marin-green);
+  color: var(--color-sequoia-dark);
+  font-weight: 600;
+}
+
+.arch-arrow {
+  text-align: center;
+  color: var(--color-sequoia-mid);
+  font-size: 0.6em;
+  line-height: 1;
+}
+
+/* ---------- Object hierarchy / namespace diagrams ---------- */
+.arch-option.used {
+  border-color: var(--color-marin-green);
+  border-width: 3px;
+  background: var(--color-stinson-sand);
+  color: var(--color-sequoia-dark);
+}
+
+.arch-option.unused {
+  border-style: dashed;
+  opacity: 0.55;
+}
+
+.ns-chain {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8em;
+  margin: 0.8em 0;
+}
+
+.ns-chain .ns-box {
+  text-align: center;
+}
+
+.ns-chain .ns-box .ns-value {
+  background: var(--color-stinson-sand);
+  border: 3px solid var(--color-marin-green);
+  border-radius: 8px;
+  padding: 0.5em 0.9em;
+  font-family: 'SFMono-Regular', Consolas, Menlo, monospace;
+  font-weight: 700;
+  font-size: 1em;
+  color: var(--color-sequoia-dark);
+}
+
+.ns-chain .ns-box .ns-label {
+  margin-top: 0.4em;
+  font-size: 0.6em;
+  color: var(--color-sequoia-mid);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.ns-chain .ns-sep {
+  font-size: 1.3em;
+  color: var(--color-sequoia-mid);
+  font-weight: 700;
+  align-self: flex-start;
+  margin-top: 0.5em;
 }
