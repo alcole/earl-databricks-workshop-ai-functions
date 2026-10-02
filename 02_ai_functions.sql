@@ -114,13 +114,21 @@ LIMIT 15;
 
 -- COMMAND ----------
 
--- TODO: write your own ai_classify / ai_extract / ai_summarize call here
-SELECT
-  complaint_id,
-  narrative
-  -- , ai_classify(narrative, ARRAY( /* your labels here */ )) AS my_category
-FROM IDENTIFIER(:catalog || '.' || :schema || '.complaints')
-LIMIT 10;
+-- DBTITLE 1,Try it yourself — SQL Editor version
+-- MAGIC %md
+-- MAGIC **Optional: Try this exercise in the SQL Editor**
+-- MAGIC
+-- MAGIC For a different experience with autocomplete, schema browser, and inline documentation, you can work on this same exercise in the SQL editor:
+-- MAGIC
+-- MAGIC 👉 **[Open sql_editor_explore.sql in SQL Editor](/editor/files/254331475145143)**
+-- MAGIC
+-- MAGIC The SQL editor provides:
+-- MAGIC * Full autocomplete for table and column names
+-- MAGIC * Schema browser panel
+-- MAGIC * Inline function documentation on hover
+-- MAGIC * Widget inputs at the top of the editor
+-- MAGIC
+-- MAGIC *Tip: Make sure to set the `:catalog` and `:schema` widget values to match what you used in the first notebook (defaults: `main` / `workshop`).*
 
 -- COMMAND ----------
 
