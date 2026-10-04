@@ -82,7 +82,7 @@ LIMIT 25;
 -- MAGIC    ```
 -- MAGIC 3. The SQL Editor auto-detects the `:catalog` and `:schema` markers and offers them as **query
 -- MAGIC    parameters** in a panel on the right — set their default values to match the widgets above
--- MAGIC    (e.g. `main` / `workshop`). This matters: a Job runs unattended, so the query needs usable
+-- MAGIC    (e.g. `workspace` / `workshop`). This matters: a Job runs unattended, so the query needs usable
 -- MAGIC    defaults rather than relying on someone typing values into a prompt.
 -- MAGIC 4. Pick the same SQL warehouse you've been using, then **Save As** — give it a name like
 -- MAGIC    `workshop-classify-complaints`.

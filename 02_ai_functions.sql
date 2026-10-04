@@ -128,7 +128,7 @@ LIMIT 15;
 -- MAGIC * Inline function documentation on hover
 -- MAGIC * Widget inputs at the top of the editor
 -- MAGIC
--- MAGIC *Tip: Make sure to set the `:catalog` and `:schema` widget values to match what you used in the first notebook (defaults: `main` / `workshop`).*
+-- MAGIC *Tip: Make sure to set the `:catalog` and `:schema` widget values to match what you used in the first notebook (defaults: `workspace` / `workshop`).*
 
 -- COMMAND ----------
 
