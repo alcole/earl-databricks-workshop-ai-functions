@@ -22,7 +22,7 @@
 
 -- COMMAND ----------
 
-CREATE WIDGET TEXT catalog DEFAULT 'main';
+CREATE WIDGET TEXT catalog DEFAULT 'workspace';
 CREATE WIDGET TEXT schema DEFAULT 'workshop';
 CREATE WIDGET TEXT volume DEFAULT 'workshop_data';
 CREATE WIDGET TEXT query_id DEFAULT '';
@@ -33,8 +33,8 @@ CREATE WIDGET TEXT query_id DEFAULT '';
 -- MAGIC ## 3.1 Save the classify query
 -- MAGIC
 -- MAGIC Run the cell below to preview the query in this notebook — it's the same `ai_classify` query
--- MAGIC from `02_ai_functions.sql`, just parameterized with `:catalog` / `:schema` instead of widgets
--- MAGIC (SQL Editor queries use `:name` parameter markers, not the `${name}` notebook-widget syntax).
+-- MAGIC from `02_ai_functions.sql`, parameterized with `:catalog` / `:schema` markers — the same
+-- MAGIC `:name` syntax works both here (bound to the widgets) and in the SQL Editor (as query parameters).
 
 -- COMMAND ----------
 

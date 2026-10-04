@@ -23,7 +23,7 @@
 
 -- COMMAND ----------
 
-CREATE WIDGET TEXT catalog DEFAULT 'main';
+CREATE WIDGET TEXT catalog DEFAULT 'workspace';
 CREATE WIDGET TEXT schema DEFAULT 'workshop';
 CREATE WIDGET TEXT volume DEFAULT 'workshop_data';
 
@@ -38,7 +38,7 @@ CREATE WIDGET TEXT volume DEFAULT 'workshop_data';
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC import zipfile, os
+-- MAGIC import zipfile, os, shutil
 -- MAGIC
 -- MAGIC catalog = dbutils.widgets.get("catalog")
 -- MAGIC schema = dbutils.widgets.get("schema")
@@ -48,7 +48,27 @@ CREATE WIDGET TEXT volume DEFAULT 'workshop_data';
 -- MAGIC zip_path = f"{volume_path}/invoices_workshop.zip"
 -- MAGIC invoices_dir = f"{volume_path}/invoices"
 -- MAGIC
--- MAGIC assert os.path.exists(zip_path), f"{zip_path} not found — upload invoices_workshop.zip to the Volume first."
+-- MAGIC if not os.path.exists(zip_path):
+-- MAGIC     # Look for invoices_workshop.zip in the project root and copy it into the Volume
+-- MAGIC     from databricks.sdk import WorkspaceClient
+-- MAGIC     search_dir = f"/Workspace/Users/{WorkspaceClient().current_user.me().user_name}"
+-- MAGIC     found = None
+-- MAGIC     for dirpath, dirnames, filenames in os.walk(search_dir):
+-- MAGIC         if "invoices_workshop.zip" in filenames:
+-- MAGIC             found = os.path.join(dirpath, "invoices_workshop.zip")
+-- MAGIC             break
+-- MAGIC         depth = dirpath[len(search_dir):].count(os.sep)
+-- MAGIC         if depth >= 3:
+-- MAGIC             dirnames.clear()
+-- MAGIC
+-- MAGIC     if found:
+-- MAGIC         os.makedirs(volume_path, exist_ok=True)
+-- MAGIC         shutil.copy(found, zip_path)
+-- MAGIC         print(f"Copied invoices_workshop.zip from {found} to {zip_path}")
+-- MAGIC     else:
+-- MAGIC         raise FileNotFoundError(
+-- MAGIC             f"{zip_path} not found and invoices_workshop.zip not found in the project workspace."
+-- MAGIC         )
 -- MAGIC
 -- MAGIC os.makedirs(invoices_dir, exist_ok=True)
 -- MAGIC with zipfile.ZipFile(zip_path) as z:
@@ -74,7 +94,10 @@ CREATE WIDGET TEXT volume DEFAULT 'workshop_data';
 SELECT
   path,
   ai_parse_document(content, MAP('version', '2.0')) AS parsed
-FROM READ_FILES('/Volumes/${catalog}/${schema}/${volume}/invoices/invoice_001.pdf', format => 'binaryFile');
+FROM READ_FILES(
+  '/Volumes/' || :catalog || '/' || :schema || '/' || :volume || '/invoices/invoice_001.pdf',
+  format => 'binaryFile'
+);
 
 -- COMMAND ----------
 
@@ -94,7 +117,10 @@ WITH parsed_docs AS (
   SELECT
     path,
     ai_parse_document(content, MAP('version', '2.0')) AS parsed_content
-  FROM READ_FILES('/Volumes/${catalog}/${schema}/${volume}/invoices/invoice_001.pdf', format => 'binaryFile')
+  FROM READ_FILES(
+    '/Volumes/' || :catalog || '/' || :schema || '/' || :volume || '/invoices/invoice_001.pdf',
+    format => 'binaryFile'
+  )
 )
 SELECT
   path,
@@ -108,7 +134,7 @@ FROM parsed_docs;
 -- MAGIC
 -- MAGIC Same pattern, your turn. A couple of ideas:
 -- MAGIC
--- MAGIC - Point at a different file — try `invoice_002.pdf` (or list `${volume}/invoices/` and pick
+-- MAGIC - Point at a different file — try `invoice_002.pdf` (or list the `invoices/` folder in your Volume and pick
 -- MAGIC   any other one)
 -- MAGIC - Extract different fields, e.g. `'["client_name", "date_of_issue"]'` — check the parsed
 -- MAGIC   output from 3.1 to see what's actually on the page before you pick field names
@@ -122,7 +148,10 @@ WITH parsed_docs AS (
   SELECT
     path,
     ai_parse_document(content, MAP('version', '2.0')) AS parsed_content
-  FROM READ_FILES('/Volumes/${catalog}/${schema}/${volume}/invoices/invoice_002.pdf', format => 'binaryFile')
+  FROM READ_FILES(
+    '/Volumes/' || :catalog || '/' || :schema || '/' || :volume || '/invoices/invoice_002.pdf',
+    format => 'binaryFile'
+  )
 )
 SELECT
   path,

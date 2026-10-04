@@ -16,7 +16,7 @@
 
 -- COMMAND ----------
 
-CREATE WIDGET TEXT catalog DEFAULT 'main';
+CREATE WIDGET TEXT catalog DEFAULT 'workspace';
 CREATE WIDGET TEXT schema DEFAULT 'workshop';
 CREATE WIDGET TEXT volume DEFAULT 'workshop_data';
 
@@ -79,26 +79,34 @@ CREATE TABLE IF NOT EXISTS IDENTIFIER(:catalog || '.' || :schema || '.complaints
 
 -- COMMAND ----------
 
-COPY INTO ${catalog}.${schema}.complaints
-FROM (
-  SELECT
-    complaint_id,
-    date_received,
-    product,
-    sub_product,
-    issue,
-    sub_issue,
-    consumer_complaint_narrative AS narrative,
-    company,
-    state,
-    submitted_via,
-    company_response_to_consumer,
-    tags
-  FROM '/Volumes/${catalog}/${schema}/${volume}/complaints_sample.csv'
-)
-FILEFORMAT = CSV
-FORMAT_OPTIONS ('header' = 'true', 'inferSchema' = 'false', 'multiLine' = 'true', 'escape' = '"')
-COPY_OPTIONS ('mergeSchema' = 'true');
+-- MAGIC %md
+-- MAGIC `COPY INTO` only accepts a literal source path, so we build the statement as a string with
+-- MAGIC `EXECUTE IMMEDIATE` to plug in the `:catalog` / `:schema` / `:volume` widget values.
+
+-- COMMAND ----------
+
+EXECUTE IMMEDIATE
+  'COPY INTO IDENTIFIER(:tbl)
+  FROM (
+    SELECT
+      complaint_id,
+      date_received,
+      product,
+      sub_product,
+      issue,
+      sub_issue,
+      consumer_complaint_narrative AS narrative,
+      company,
+      state,
+      submitted_via,
+      company_response_to_consumer,
+      tags
+    FROM ''/Volumes/' || :catalog || '/' || :schema || '/' || :volume || '/complaints_sample.csv''
+  )
+  FILEFORMAT = CSV
+  FORMAT_OPTIONS (''header'' = ''true'', ''inferSchema'' = ''false'', ''multiLine'' = ''true'', ''escape'' = ''"'')
+  COPY_OPTIONS (''mergeSchema'' = ''true'')'
+  USING :catalog || '.' || :schema || '.complaints' AS tbl;
 
 -- COMMAND ----------
 
