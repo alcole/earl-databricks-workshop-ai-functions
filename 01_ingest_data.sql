@@ -6,7 +6,8 @@
 -- MAGIC 1. Download `complaints_sample.csv` from:
 -- MAGIC    `https://raw.githubusercontent.com/alcole/earl-databricks-workshop-ai-functions/main/complaints_sample.csv`
 -- MAGIC 2. Update the `catalog` / `schema` / `volume` widgets below if you don't want the defaults
--- MAGIC 3. Run the notebook — it creates the schema and Volume for you, then you'll upload the CSV into that Volume via Catalog Explorer's **Upload** button before the `LIST` cell
+-- MAGIC 3. Run the notebook — it creates the schema and Volume for you, then copies `complaints_sample.csv`
+-- MAGIC    from your cloned Git folder into the Volume (or upload it via Catalog Explorer's **Upload** button if that fails)
 
 -- COMMAND ----------
 
@@ -35,14 +36,44 @@ CREATE VOLUME IF NOT EXISTS IDENTIFIER(:catalog || '.' || :schema || '.' || :vol
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC ### Confirm the file landed in the Volume
--- MAGIC If this errors, upload `complaints_sample.csv` into the Volume via Catalog Explorer's **Upload** button first.
+-- MAGIC ### Get the CSV into the Volume
+-- MAGIC If `complaints_sample.csv` isn't in the Volume yet, this copies it from the Git folder you
+-- MAGIC cloned. If that fails, upload it via Catalog Explorer's **Upload** button and re-run.
 
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC path = f"/Volumes/{dbutils.widgets.get('catalog')}/{dbutils.widgets.get('schema')}/{dbutils.widgets.get('volume')}/"
--- MAGIC display(dbutils.fs.ls(path))
+-- MAGIC import os, shutil
+-- MAGIC
+-- MAGIC catalog = dbutils.widgets.get("catalog")
+-- MAGIC schema = dbutils.widgets.get("schema")
+-- MAGIC volume = dbutils.widgets.get("volume")
+-- MAGIC
+-- MAGIC volume_path = f"/Volumes/{catalog}/{schema}/{volume}"
+-- MAGIC csv_path = f"{volume_path}/complaints_sample.csv"
+-- MAGIC
+-- MAGIC if not os.path.exists(csv_path):
+-- MAGIC     # Look for complaints_sample.csv in the project root and copy it into the Volume
+-- MAGIC     from databricks.sdk import WorkspaceClient
+-- MAGIC     search_dir = f"/Workspace/Users/{WorkspaceClient().current_user.me().user_name}"
+-- MAGIC     found = None
+-- MAGIC     for dirpath, dirnames, filenames in os.walk(search_dir):
+-- MAGIC         if "complaints_sample.csv" in filenames:
+-- MAGIC             found = os.path.join(dirpath, "complaints_sample.csv")
+-- MAGIC             break
+-- MAGIC         depth = dirpath[len(search_dir):].count(os.sep)
+-- MAGIC         if depth >= 3:
+-- MAGIC             dirnames.clear()
+-- MAGIC
+-- MAGIC     if found:
+-- MAGIC         shutil.copy(found, csv_path)
+-- MAGIC         print(f"Copied complaints_sample.csv from {found} to {csv_path}")
+-- MAGIC     else:
+-- MAGIC         raise FileNotFoundError(
+-- MAGIC             f"{csv_path} not found and complaints_sample.csv not found in the project workspace."
+-- MAGIC         )
+-- MAGIC
+-- MAGIC display(dbutils.fs.ls(volume_path))
 
 -- COMMAND ----------
 
@@ -104,11 +135,11 @@ SET VAR copy_sql =
       submitted_via,
       company_response_to_consumer,
       tags
-    FROM ''/Volumes/' || :catalog || '/' || :schema || '/' || :volume || '/complaints_sample.csv''
+    FROM \'/Volumes/' || :catalog || '/' || :schema || '/' || :volume || '/complaints_sample.csv\'
   )
   FILEFORMAT = CSV
-  FORMAT_OPTIONS (''header'' = ''true'', ''inferSchema'' = ''false'', ''multiLine'' = ''true'', ''escape'' = ''"'')
-  COPY_OPTIONS (''mergeSchema'' = ''true'')';
+  FORMAT_OPTIONS (\'header\' = \'true\', \'inferSchema\' = \'false\', \'multiLine\' = \'true\', \'escape\' = \'"\')
+  COPY_OPTIONS (\'mergeSchema\' = \'true\')';
 
 EXECUTE IMMEDIATE copy_sql;
 
