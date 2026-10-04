@@ -9,11 +9,8 @@
 -- MAGIC layout (paragraphs, tables, headers, page numbers) that downstream AI functions — or your own
 -- MAGIC code — can work with directly.
 -- MAGIC
--- MAGIC **Before running this notebook:**
--- MAGIC 1. Download `invoices_workshop.zip` from:
--- MAGIC    `https://raw.githubusercontent.com/alcole/earl-databricks-workshop-ai-functions/main/invoices_workshop.zip`
--- MAGIC 2. Upload it into the same Volume you used in `01_ingest_data.sql`, via Catalog Explorer's
--- MAGIC    **Upload** button (no need to unzip it yourself — the next cell does that on the platform).
+-- MAGIC **Before running this notebook:** run `01_ingest_data.sql` — it copies `invoices_workshop.zip`
+-- MAGIC into the Volume and unzips the sample invoices into `invoices/`.
 
 -- COMMAND ----------
 
@@ -26,57 +23,6 @@
 CREATE WIDGET TEXT catalog DEFAULT 'workspace';
 CREATE WIDGET TEXT schema DEFAULT 'workshop';
 CREATE WIDGET TEXT volume DEFAULT 'workshop_data';
-
--- COMMAND ----------
-
--- MAGIC %md
--- MAGIC ### Unzip the sample invoices into the Volume
--- MAGIC Unity Catalog Volumes are just regular paths under `/Volumes/...`, so plain Python file I/O
--- MAGIC (including `zipfile`) works directly against them — no special upload step needed beyond
--- MAGIC getting the zip itself into the Volume.
-
--- COMMAND ----------
-
--- MAGIC %python
--- MAGIC import zipfile, os, shutil
--- MAGIC
--- MAGIC catalog = dbutils.widgets.get("catalog")
--- MAGIC schema = dbutils.widgets.get("schema")
--- MAGIC volume = dbutils.widgets.get("volume")
--- MAGIC
--- MAGIC volume_path = f"/Volumes/{catalog}/{schema}/{volume}"
--- MAGIC zip_path = f"{volume_path}/invoices_workshop.zip"
--- MAGIC invoices_dir = f"{volume_path}/invoices"
--- MAGIC
--- MAGIC if not os.path.exists(zip_path):
--- MAGIC     # Look for invoices_workshop.zip in the project root and copy it into the Volume
--- MAGIC     from databricks.sdk import WorkspaceClient
--- MAGIC     search_dir = f"/Workspace/Users/{WorkspaceClient().current_user.me().user_name}"
--- MAGIC     found = None
--- MAGIC     for dirpath, dirnames, filenames in os.walk(search_dir):
--- MAGIC         if "invoices_workshop.zip" in filenames:
--- MAGIC             found = os.path.join(dirpath, "invoices_workshop.zip")
--- MAGIC             break
--- MAGIC         depth = dirpath[len(search_dir):].count(os.sep)
--- MAGIC         if depth >= 3:
--- MAGIC             dirnames.clear()
--- MAGIC
--- MAGIC     if found:
--- MAGIC         os.makedirs(volume_path, exist_ok=True)
--- MAGIC         shutil.copy(found, zip_path)
--- MAGIC         print(f"Copied invoices_workshop.zip from {found} to {zip_path}")
--- MAGIC     else:
--- MAGIC         raise FileNotFoundError(
--- MAGIC             f"{zip_path} not found and invoices_workshop.zip not found in the project workspace."
--- MAGIC         )
--- MAGIC
--- MAGIC os.makedirs(invoices_dir, exist_ok=True)
--- MAGIC with zipfile.ZipFile(zip_path) as z:
--- MAGIC     z.extractall(invoices_dir)
--- MAGIC
--- MAGIC pdfs = sorted(f for f in os.listdir(invoices_dir) if f.endswith(".pdf"))
--- MAGIC print(f"Extracted {len(pdfs)} PDFs into {invoices_dir}")
--- MAGIC print(pdfs[:5])
 
 -- COMMAND ----------
 
