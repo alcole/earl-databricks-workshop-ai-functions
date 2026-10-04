@@ -21,7 +21,7 @@ workspace per account).
 
 ## Naming convention
 
-Every notebook's widgets default to catalog **`main`**, schema **`workshop`**. Use those and you
+Every notebook's widgets default to catalog **`workspace`**, schema **`workshop`**. Use those and you
 won't need to edit anything — just run the notebooks as-is.
 
 ## Notebooks
@@ -35,7 +35,7 @@ Run in order:
    Databricks Job; try this in your own time if the session runs out
 
 After the notebooks, there's a UI-only activity (no notebook): see **[GENIE_GUIDE.md](GENIE_GUIDE.md)**
-to build a Genie Agent over `main.workshop.complaints` and ask it questions in plain English.
+to build a Genie Agent over `workspace.workshop.complaints` and ask it questions in plain English.
 
 ## Other resources
 
