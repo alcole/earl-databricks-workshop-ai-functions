@@ -80,13 +80,16 @@ CREATE TABLE IF NOT EXISTS IDENTIFIER(:catalog || '.' || :schema || '.complaints
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC `COPY INTO` only accepts a literal source path, so we build the statement as a string with
--- MAGIC `EXECUTE IMMEDIATE` to plug in the `:catalog` / `:schema` / `:volume` widget values.
+-- MAGIC `COPY INTO` only accepts a literal source path, so we build the statement as a string in a
+-- MAGIC session variable (plugging in the `:catalog` / `:schema` / `:volume` widget values) and run it
+-- MAGIC with `EXECUTE IMMEDIATE`.
 
 -- COMMAND ----------
 
-EXECUTE IMMEDIATE
-  'COPY INTO IDENTIFIER(:tbl)
+DECLARE OR REPLACE VARIABLE copy_sql STRING;
+
+SET VAR copy_sql =
+  'COPY INTO `' || :catalog || '`.`' || :schema || '`.complaints
   FROM (
     SELECT
       complaint_id,
@@ -105,8 +108,9 @@ EXECUTE IMMEDIATE
   )
   FILEFORMAT = CSV
   FORMAT_OPTIONS (''header'' = ''true'', ''inferSchema'' = ''false'', ''multiLine'' = ''true'', ''escape'' = ''"'')
-  COPY_OPTIONS (''mergeSchema'' = ''true'')'
-  USING :catalog || '.' || :schema || '.complaints' AS tbl;
+  COPY_OPTIONS (''mergeSchema'' = ''true'')';
+
+EXECUTE IMMEDIATE copy_sql;
 
 -- COMMAND ----------
 
