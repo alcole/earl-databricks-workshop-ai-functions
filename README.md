@@ -1,7 +1,7 @@
 <p align="center">
-  <img src="brand/horizontal_tight_plain_light.png" alt="Kubrick Group × Databricks" height="120">
+  <img src="brand/horizontal_tight_plain_light.png" alt="Kubrick Group × Databricks" height="120" valign="middle">
   &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="brand/earl-logo-1-on-dark.png" alt="EARL Conference" height="60">
+  <img src="brand/earl-logo-1-on-dark.png" alt="EARL Conference" height="60" valign="middle">
 </p>
 
 # earl-databricks-workshop-ai-functions
