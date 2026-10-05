@@ -45,8 +45,8 @@ to build a Genie Agent over `workspace.workshop.complaints` and ask it questions
 hands-on path above — mainly because it needs a full Databricks workspace rather than Free
 Edition. Not required to follow along, but worth a look afterwards:
 
-- **`r_demo_ai_functions.r`** — calls the same AI functions from R via the SQL Statement
-  Execution API, run on a standard paid workspace (R isn't supported on Free Edition)
+- **`r_demo_ai_functions.r`** — calls the same AI functions from R via `sparklyr`, run on a
+  standard paid workspace (R isn't supported on Free Edition's serverless-only compute)
 - *(planned)* an API → governed table demo, showing what landing data through a governed
   Unity Catalog table buys you over raw API ingestion — also not doable on Free Edition
 

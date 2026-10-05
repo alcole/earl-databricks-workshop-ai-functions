@@ -1,117 +1,37 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC # R demo: calling Databricks AI Functions via the SQL Statement Execution API
+# MAGIC # R demo: calling Databricks AI Functions via sparklyr
 # MAGIC
 # MAGIC `02_ai_functions.sql` called `ai_classify` / `ai_extract` / `ai_summarize` from a SQL notebook
-# MAGIC cell. That's one client talking to one warehouse — but the warehouse is just compute sitting
-# MAGIC behind a REST API. Anything that can make an HTTP call can run the exact same SQL, including
-# MAGIC these AI functions, without ever opening the SQL editor.
-# MAGIC
-# MAGIC This notebook proves that by calling the same functions from **R**, using the
-# MAGIC [SQL Statement Execution API](https://docs.databricks.com/aws/en/dev-tools/sql-execution-tutorial)
-# MAGIC directly: POST a statement, poll until it finishes, get rows back. R isn't special here — the
-# MAGIC point is the API, not the language (see the closing note at the bottom).
+# MAGIC cell. They're plain SQL functions, though — any language with a Spark connector can call them
+# MAGIC the same way. This notebook proves that from **R**, using
+# MAGIC [`sparklyr`](https://spark.posit.co/) connected to this cluster's existing Spark session via
+# MAGIC `spark_connect(method = "databricks")` — no separate auth, no REST client, just SQL through R.
 # MAGIC
 # MAGIC This workspace doesn't have the `complaints` table loaded, so every query below is a
 # MAGIC standalone literal-text example, written to read consistently with the workshop dataset.
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Auth: get a short-lived token, don't hardcode one
-# MAGIC
-# MAGIC A couple of ways to get a token into this notebook without committing one to the repo:
-# MAGIC
-# MAGIC - **What this notebook uses**: widgets, populated at run time. Run
-# MAGIC   `databricks auth token -p dra-dev` in your terminal, copy the `access_token` value (it's an
-# MAGIC   OAuth token, valid for about an hour), and paste it into the `token` widget below. Widget
-# MAGIC   *values* aren't part of the notebook's saved source — only the (empty) default is — so
-# MAGIC   nothing sensitive ends up in git.
-# MAGIC - **Why not `dbutils.notebook.getContext()$apiToken`?** This in-notebook trick shows up in a lot
-# MAGIC   of community examples, but it isn't officially documented, and is known to fail on newer
-# MAGIC   Shared Access Mode clusters — not something to rely on right before a live demo.
-# MAGIC - **Alternative for a fully hands-off run**: set `DATABRICKS_TOKEN` as a cluster environment
-# MAGIC   variable (Cluster → Advanced Options → Spark → Environment Variables) instead of a widget,
-# MAGIC   and swap the `dbutils.widgets.get("token")` call below for `Sys.getenv("DATABRICKS_TOKEN")`.
+library(sparklyr)
 
-# COMMAND ----------
-
-dbutils.widgets.text("host", "https://adb-1405986770269510.10.azuredatabricks.net", "Databricks host")
-dbutils.widgets.text("warehouse_id", "b0600754dcddc59e", "SQL warehouse ID (dev-dra-sqlwh)")
-dbutils.widgets.text("token", "", "Token (paste output of: databricks auth token -p dra-dev)")
-
-# COMMAND ----------
-
-if (!requireNamespace("httr", quietly = TRUE)) install.packages("httr")
-if (!requireNamespace("jsonlite", quietly = TRUE)) install.packages("jsonlite")
-library(httr)
-library(jsonlite)
-
-HOST <- dbutils.widgets.get("host")
-WAREHOUSE_ID <- dbutils.widgets.get("warehouse_id")
-TOKEN <- dbutils.widgets.get("token")
-
-stopifnot("Paste a token into the 'token' widget first (see the auth cell above)." = nzchar(TOKEN))
+sc <- spark_connect(method = "databricks")
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## A reusable helper: `run_databricks_sql()`
+# MAGIC ## A reusable helper: `run_sql()`
 # MAGIC
-# MAGIC POSTs a statement to `/api/2.0/sql/statements`, polls `GET .../{statement_id}` until the state
-# MAGIC is no longer pending, and returns the result as a data frame. Uses the API's `parameters`
-# MAGIC field (`:name` markers in the SQL, bound via a `name`/`value`/`type` list) instead of pasting
-# MAGIC values into the SQL string directly — this is Databricks' own recommended way to avoid SQL
-# MAGIC injection when a query is built dynamically, which is exactly what's happening here.
+# MAGIC Runs a SQL string against the connected cluster and returns the result as an R data frame.
+# MAGIC `sql_quote()` escapes embedded single quotes before splicing a value into the SQL text —
+# MAGIC these example narratives don't contain any, but it's good habit for anything that eventually
+# MAGIC takes real user input.
 
 # COMMAND ----------
 
-`%||%` <- function(a, b) if (!is.null(a)) a else b
+run_sql <- function(sql) sparklyr::collect(sparklyr::sdf_sql(sc, sql))
 
-run_databricks_sql <- function(statement, warehouse_id = WAREHOUSE_ID, host = HOST, token = TOKEN,
-                                parameters = NULL, poll_interval_secs = 2, timeout_secs = 120) {
-  body <- list(warehouse_id = warehouse_id, statement = statement, wait_timeout = "0s")
-  if (!is.null(parameters)) body$parameters <- parameters
-
-  post_resp <- httr::POST(
-    url = paste0(host, "/api/2.0/sql/statements"),
-    httr::add_headers(Authorization = paste("Bearer", token)),
-    httr::content_type_json(),
-    body = jsonlite::toJSON(body, auto_unbox = TRUE)
-  )
-  httr::stop_for_status(post_resp, task = "submit SQL statement")
-  parsed <- httr::content(post_resp, as = "parsed", simplifyVector = FALSE)
-  statement_id <- parsed$statement_id
-
-  start_time <- Sys.time()
-  while (parsed$status$state %in% c("PENDING", "RUNNING")) {
-    if (as.numeric(Sys.time() - start_time, units = "secs") > timeout_secs) {
-      stop(sprintf("Statement %s did not finish within %ds", statement_id, timeout_secs))
-    }
-    Sys.sleep(poll_interval_secs)
-    get_resp <- httr::GET(
-      url = paste0(host, "/api/2.0/sql/statements/", statement_id),
-      httr::add_headers(Authorization = paste("Bearer", token))
-    )
-    httr::stop_for_status(get_resp, task = "poll SQL statement")
-    parsed <- httr::content(get_resp, as = "parsed", simplifyVector = FALSE)
-  }
-
-  state <- parsed$status$state
-  if (state != "SUCCEEDED") {
-    err <- parsed$status$error$message %||% "(no error message returned)"
-    stop(sprintf("Statement %s: %s", state, err))
-  }
-
-  cols <- vapply(parsed$manifest$schema$columns, function(c) c$name, character(1))
-  rows <- parsed$result$data_array
-  if (is.null(rows) || length(rows) == 0) {
-    return(as.data.frame(matrix(nrow = 0, ncol = length(cols), dimnames = list(NULL, cols))))
-  }
-  df <- as.data.frame(do.call(rbind, lapply(rows, function(r) as.data.frame(t(r), stringsAsFactors = FALSE))))
-  colnames(df) <- cols
-  df
-}
+sql_quote <- function(x) paste0("'", gsub("'", "''", x, fixed = TRUE), "'")
 
 # COMMAND ----------
 
@@ -125,10 +45,10 @@ narrative_1 <- paste(
   "and each time I am told someone will call me back, but nobody ever does."
 )
 
-classify_result <- run_databricks_sql(
-  "SELECT ai_classify(:narrative, ARRAY('Billing or fee dispute', 'Debt collection practices', 'Fraud or unauthorized transaction', 'Credit reporting error', 'Customer service quality', 'Other')) AS category",
-  parameters = list(list(name = "narrative", value = narrative_1, type = "STRING"))
-)
+classify_result <- run_sql(sprintf(
+  "SELECT ai_classify(%s, ARRAY('Billing or fee dispute', 'Debt collection practices', 'Fraud or unauthorized transaction', 'Credit reporting error', 'Customer service quality', 'Other')) AS category",
+  sql_quote(narrative_1)
+))
 print(classify_result)
 
 # COMMAND ----------
@@ -143,10 +63,10 @@ narrative_2 <- paste(
   "signed up for, and they still have not refunded me."
 )
 
-extract_result <- run_databricks_sql(
-  "SELECT ai_extract(:narrative, ARRAY('company name mentioned', 'dollar amount mentioned', 'date mentioned')) AS extracted_fields",
-  parameters = list(list(name = "narrative", value = narrative_2, type = "STRING"))
-)
+extract_result <- run_sql(sprintf(
+  "SELECT ai_extract(%s, ARRAY('company name mentioned', 'dollar amount mentioned', 'date mentioned')) AS extracted_fields",
+  sql_quote(narrative_2)
+))
 print(extract_result)
 
 # COMMAND ----------
@@ -163,10 +83,10 @@ narrative_3 <- paste(
   "when, or if, the loan will actually be funded."
 )
 
-summarize_result <- run_databricks_sql(
-  "SELECT ai_summarize(:narrative, 40) AS narrative_summary",
-  parameters = list(list(name = "narrative", value = narrative_3, type = "STRING"))
-)
+summarize_result <- run_sql(sprintf(
+  "SELECT ai_summarize(%s, 40) AS narrative_summary",
+  sql_quote(narrative_3)
+))
 print(summarize_result)
 
 # COMMAND ----------
@@ -175,7 +95,7 @@ print(summarize_result)
 # MAGIC ## 4. Chaining: summarize, then classify the summary
 # MAGIC
 # MAGIC Same idea as `02_ai_functions.sql`'s chaining cell — reason over the cheaper, shorter summary
-# MAGIC instead of the full narrative — but here the chaining happens **across two separate API calls**,
+# MAGIC instead of the full narrative — but here the chaining happens **across two separate calls**,
 # MAGIC with the intermediate result crossing back into R in between. That's a second way to chain AI
 # MAGIC functions beyond a SQL CTE: the client can hold, inspect, or branch on an intermediate result
 # MAGIC before deciding what the next call should even be.
@@ -189,17 +109,17 @@ narrative_4 <- paste(
   "they have refused to provide."
 )
 
-summary_step <- run_databricks_sql(
-  "SELECT ai_summarize(:narrative, 40) AS narrative_summary",
-  parameters = list(list(name = "narrative", value = narrative_4, type = "STRING"))
-)
+summary_step <- run_sql(sprintf(
+  "SELECT ai_summarize(%s, 40) AS narrative_summary",
+  sql_quote(narrative_4)
+))
 summary_text <- summary_step$narrative_summary[1]
 cat("Summary:", summary_text, "\n")
 
-urgency_step <- run_databricks_sql(
-  "SELECT ai_classify(:summary, ARRAY('High', 'Medium', 'Low')) AS urgency",
-  parameters = list(list(name = "summary", value = summary_text, type = "STRING"))
-)
+urgency_step <- run_sql(sprintf(
+  "SELECT ai_classify(%s, ARRAY('High', 'Medium', 'Low')) AS urgency",
+  sql_quote(summary_text)
+))
 cat("Urgency:", urgency_step$urgency[1], "\n")
 
 # COMMAND ----------
@@ -207,7 +127,8 @@ cat("Urgency:", urgency_step$urgency[1], "\n")
 # MAGIC %md
 # MAGIC ## Closing note
 # MAGIC
-# MAGIC Nothing above is R-specific — it's an HTTP POST, a poll loop, and JSON parsing. The same
-# MAGIC pattern works from Python (`requests`), Java (`HttpClient`), or literally any language with an
-# MAGIC HTTP client and a bearer token. R was today's example; the warehouse and the AI functions
-# MAGIC behind it don't care what called them.
+# MAGIC `ai_classify` / `ai_extract` / `ai_summarize` are plain SQL functions — `sparklyr` just gives R
+# MAGIC a way to send SQL to the same Spark engine this cluster already runs. Nothing above is
+# MAGIC R-specific: PySpark, Scala Spark, or a `%sql` cell on this same cluster would call these
+# MAGIC functions exactly the same way. R was today's example; the functions don't care what sent them
+# MAGIC the query.
