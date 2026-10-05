@@ -1,6 +1,6 @@
 -- Databricks notebook source
 -- MAGIC %md
--- MAGIC # 3. Automate the input: turning an AI function query into a Job
+-- MAGIC # 4. Automate the input: turning an AI function query into a Job
 -- MAGIC
 -- MAGIC `02_ai_functions.sql` ran everything by hand, one cell at a time. That's fine for exploring,
 -- MAGIC but it doesn't scale — every time new complaints land in the Volume, someone has to remember
@@ -30,7 +30,7 @@ CREATE WIDGET TEXT query_id DEFAULT '';
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC ## 3.1 Save the classify query
+-- MAGIC ## 4.1 Save the classify query
 -- MAGIC
 -- MAGIC Run the cell below to preview the query in this notebook — it's the same `ai_classify` query
 -- MAGIC from `02_ai_functions.sql`, parameterized with `:catalog` / `:schema` markers — the same
@@ -98,7 +98,7 @@ LIMIT 25;
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC ## 3.2 Create and run a Job from Python
+-- MAGIC ## 4.2 Create and run a Job from Python
 -- MAGIC
 -- MAGIC Everything past this point is scriptable. We'll use the Databricks SDK to create a Job whose
 -- MAGIC only task is `sql_task` pointed at the query you just saved, trigger it immediately with
@@ -181,7 +181,7 @@ LIMIT 25;
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC ## 3.3 Automate it for real: a file-arrival trigger
+-- MAGIC ## 4.3 Automate it for real: a file-arrival trigger
 -- MAGIC
 -- MAGIC `run_now` is a manual trigger — someone (or something) still has to call it. For "reprocess
 -- MAGIC automatically when new data lands," a **file-arrival trigger** watches a Unity Catalog Volume
@@ -235,7 +235,7 @@ LIMIT 25;
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC ## 3.4 Verify the run actually happened
+-- MAGIC ## 4.4 Verify the run actually happened
 -- MAGIC
 -- MAGIC Query the job's run history through the SDK — this hits the live Jobs API, not a downstream
 -- MAGIC system table, so there's no reporting lag to worry about.
