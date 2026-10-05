@@ -22,7 +22,7 @@
 
 -- COMMAND ----------
 
-CREATE WIDGET TEXT catalog DEFAULT 'main';
+CREATE WIDGET TEXT catalog DEFAULT 'workspace';
 CREATE WIDGET TEXT schema DEFAULT 'workshop';
 CREATE WIDGET TEXT connection_name DEFAULT 'frankfurter_api';
 
@@ -38,11 +38,13 @@ CREATE WIDGET TEXT connection_name DEFAULT 'frankfurter_api';
 
 -- COMMAND ----------
 
-CREATE CONNECTION IF NOT EXISTS IDENTIFIER(:connection_name) TYPE HTTP
+DROP CONNECTION IF EXISTS frankfurter_api;
+CREATE CONNECTION frankfurter_api TYPE HTTP
 OPTIONS (
   host 'https://api.frankfurter.dev',
   port '443',
-  base_path '/v1/'
+  base_path '/v1/',
+  bearer_token 'unused'
 );
 
 -- COMMAND ----------
