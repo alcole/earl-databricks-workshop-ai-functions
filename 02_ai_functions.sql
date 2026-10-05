@@ -146,5 +146,5 @@ FROM summarized;
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC Next: **03_document_exploration.sql** — running these same kinds of AI functions over
--- MAGIC unstructured documents (PDFs) instead of just text columns.
+-- MAGIC Next: <a href="$./03_document_exploration">03_document_exploration.sql</a> — running these same
+-- MAGIC kinds of AI functions over unstructured documents (PDFs) instead of just text columns.

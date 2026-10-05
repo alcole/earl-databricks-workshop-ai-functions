@@ -156,4 +156,4 @@ LIMIT 5;
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC Data's loaded. Move to notebook **02_ai_functions.sql** next.
+-- MAGIC Data's loaded. Move to notebook <a href="$./02_ai_functions">02_ai_functions.sql</a> next.

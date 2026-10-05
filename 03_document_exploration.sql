@@ -130,5 +130,5 @@ FROM parsed_docs;
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC Next: **04_pipelines_jobs.sql** — turning one of these queries into a scheduled or
--- MAGIC triggered pipeline.
+-- MAGIC Next: <a href="$./04_pipelines_jobs">04_pipelines_jobs.sql</a> — turning one of these queries
+-- MAGIC into a scheduled or triggered pipeline.

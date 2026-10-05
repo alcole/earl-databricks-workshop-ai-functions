@@ -251,4 +251,5 @@ LIMIT 25;
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC Next: **R demo** (presenter), then **Genie + dashboard**.
+-- MAGIC Next: **R demo** (presenter), then **Genie + dashboard**. Whenever you're done with the
+-- MAGIC workshop, run <a href="$./05_cleanup">05_cleanup.sql</a> to remove everything these notebooks created.
