@@ -114,24 +114,6 @@ LIMIT 15;
 
 -- COMMAND ----------
 
--- DBTITLE 1,Try it yourself — SQL Editor version
--- MAGIC %md
--- MAGIC **Optional: Try this exercise in the SQL Editor**
--- MAGIC
--- MAGIC For a different experience with autocomplete, schema browser, and inline documentation, you can work on this same exercise in the SQL editor:
--- MAGIC
--- MAGIC 👉 **[Open sql_editor_explore.sql in SQL Editor](/editor/files/254331475145143)**
--- MAGIC
--- MAGIC The SQL editor provides:
--- MAGIC * Full autocomplete for table and column names
--- MAGIC * Schema browser panel
--- MAGIC * Inline function documentation on hover
--- MAGIC * Widget inputs at the top of the editor
--- MAGIC
--- MAGIC *Tip: Make sure to set the `:catalog` and `:schema` widget values to match what you used in the first notebook (defaults: `workspace` / `workshop`).*
-
--- COMMAND ----------
-
 -- MAGIC %md
 -- MAGIC ## 2.5 Chaining AI functions: summarize, then classify the summary
 -- MAGIC
