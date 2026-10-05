@@ -21,7 +21,7 @@ workspace per account).
 
 ## Naming convention
 
-Every notebook's widgets default to catalog **`main`**, schema **`workshop`**. Use those and you
+Every notebook's widgets default to catalog **`workspace`**, schema **`workshop`**. Use those and you
 won't need to edit anything — just run the notebooks as-is.
 
 ## Notebooks
@@ -33,9 +33,11 @@ Run in order:
 3. **`03_document_exploration.sql`** — `ai_parse_document` + `ai_extract` on invoice PDFs
 4. **`04_pipelines_jobs.sql`** *(optional)* — automates one of the AI function queries via a
    Databricks Job; try this in your own time if the session runs out
+5. **`05_cleanup.sql`** — deletes everything the workshop created (Jobs, saved query, and the
+   schema with its table and Volume). Type `DELETE` into its `confirm` widget to run it
 
 After the notebooks, there's a UI-only activity (no notebook): see **[GENIE_GUIDE.md](GENIE_GUIDE.md)**
-to build a Genie Agent over `main.workshop.complaints` and ask it questions in plain English.
+to build a Genie Agent over `workspace.workshop.complaints` and ask it questions in plain English.
 
 ## Other resources
 
@@ -57,7 +59,7 @@ Edition. Not required to follow along, but worth a look afterwards:
 
 **Recommended — clone the whole repo via Git folders:** in your workspace sidebar, **Workspace →
 Add → Add a Git folder**, paste `https://github.com/alcole/earl-databricks-workshop-ai-functions`,
-and clone. All four notebooks and both datasets land in your workspace at once, and you can
+and clone. All the notebooks and both datasets land in your workspace at once, and you can
 **Pull** later to grab any updates — no need to download or import anything by hand.
 
 Or, to grab just one notebook:

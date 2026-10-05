@@ -9,11 +9,8 @@
 -- MAGIC layout (paragraphs, tables, headers, page numbers) that downstream AI functions — or your own
 -- MAGIC code — can work with directly.
 -- MAGIC
--- MAGIC **Before running this notebook:**
--- MAGIC 1. Download `invoices_workshop.zip` from:
--- MAGIC    `https://raw.githubusercontent.com/alcole/earl-databricks-workshop-ai-functions/main/invoices_workshop.zip`
--- MAGIC 2. Upload it into the same Volume you used in `01_ingest_data.sql`, via Catalog Explorer's
--- MAGIC    **Upload** button (no need to unzip it yourself — the next cell does that on the platform).
+-- MAGIC **Before running this notebook:** run `01_ingest_data.sql` — it copies `invoices_workshop.zip`
+-- MAGIC into the Volume and unzips the sample invoices into `invoices/`.
 
 -- COMMAND ----------
 
@@ -23,40 +20,9 @@
 
 -- COMMAND ----------
 
-CREATE WIDGET TEXT catalog DEFAULT 'main';
+CREATE WIDGET TEXT catalog DEFAULT 'workspace';
 CREATE WIDGET TEXT schema DEFAULT 'workshop';
 CREATE WIDGET TEXT volume DEFAULT 'workshop_data';
-
--- COMMAND ----------
-
--- MAGIC %md
--- MAGIC ### Unzip the sample invoices into the Volume
--- MAGIC Unity Catalog Volumes are just regular paths under `/Volumes/...`, so plain Python file I/O
--- MAGIC (including `zipfile`) works directly against them — no special upload step needed beyond
--- MAGIC getting the zip itself into the Volume.
-
--- COMMAND ----------
-
--- MAGIC %python
--- MAGIC import zipfile, os
--- MAGIC
--- MAGIC catalog = dbutils.widgets.get("catalog")
--- MAGIC schema = dbutils.widgets.get("schema")
--- MAGIC volume = dbutils.widgets.get("volume")
--- MAGIC
--- MAGIC volume_path = f"/Volumes/{catalog}/{schema}/{volume}"
--- MAGIC zip_path = f"{volume_path}/invoices_workshop.zip"
--- MAGIC invoices_dir = f"{volume_path}/invoices"
--- MAGIC
--- MAGIC assert os.path.exists(zip_path), f"{zip_path} not found — upload invoices_workshop.zip to the Volume first."
--- MAGIC
--- MAGIC os.makedirs(invoices_dir, exist_ok=True)
--- MAGIC with zipfile.ZipFile(zip_path) as z:
--- MAGIC     z.extractall(invoices_dir)
--- MAGIC
--- MAGIC pdfs = sorted(f for f in os.listdir(invoices_dir) if f.endswith(".pdf"))
--- MAGIC print(f"Extracted {len(pdfs)} PDFs into {invoices_dir}")
--- MAGIC print(pdfs[:5])
 
 -- COMMAND ----------
 
@@ -71,10 +37,14 @@ CREATE WIDGET TEXT volume DEFAULT 'workshop_data';
 
 -- COMMAND ----------
 
+-- DBTITLE 1,Cell 5
 SELECT
   path,
-  ai_parse_document(content, MAP('version', '2.0')) AS parsed
-FROM READ_FILES('/Volumes/${catalog}/${schema}/${volume}/invoices/invoice_001.pdf', format => 'binaryFile');
+  CAST(ai_parse_document(content, MAP('version', '2.0')) AS STRING) AS parsed
+FROM READ_FILES(
+  '/Volumes/' || :catalog || '/' || :schema || '/' || :volume || '/invoices/invoice_001.pdf',
+  format => 'binaryFile'
+);
 
 -- COMMAND ----------
 
@@ -90,15 +60,19 @@ FROM READ_FILES('/Volumes/${catalog}/${schema}/${volume}/invoices/invoice_001.pd
 
 -- COMMAND ----------
 
+-- DBTITLE 1,Cell 7
 WITH parsed_docs AS (
   SELECT
     path,
     ai_parse_document(content, MAP('version', '2.0')) AS parsed_content
-  FROM READ_FILES('/Volumes/${catalog}/${schema}/${volume}/invoices/invoice_001.pdf', format => 'binaryFile')
+  FROM READ_FILES(
+    '/Volumes/' || :catalog || '/' || :schema || '/' || :volume || '/invoices/invoice_001.pdf',
+    format => 'binaryFile'
+  )
 )
 SELECT
   path,
-  ai_extract(parsed_content, '["invoice_number", "vendor_name", "total_amount"]') AS invoice_data
+  CAST(ai_extract(parsed_content, '["invoice_number", "vendor_name", "total_amount"]') AS STRING) AS invoice_data
 FROM parsed_docs;
 
 -- COMMAND ----------
@@ -108,7 +82,7 @@ FROM parsed_docs;
 -- MAGIC
 -- MAGIC Same pattern, your turn. A couple of ideas:
 -- MAGIC
--- MAGIC - Point at a different file — try `invoice_002.pdf` (or list `${volume}/invoices/` and pick
+-- MAGIC - Point at a different file — try `invoice_002.pdf` (or list the `invoices/` folder in your Volume and pick
 -- MAGIC   any other one)
 -- MAGIC - Extract different fields, e.g. `'["client_name", "date_of_issue"]'` — check the parsed
 -- MAGIC   output from 3.1 to see what's actually on the page before you pick field names
@@ -117,16 +91,20 @@ FROM parsed_docs;
 
 -- COMMAND ----------
 
+-- DBTITLE 1,Cell 9
 -- TODO: point this at a different invoice file and/or extract different fields
 WITH parsed_docs AS (
   SELECT
     path,
     ai_parse_document(content, MAP('version', '2.0')) AS parsed_content
-  FROM READ_FILES('/Volumes/${catalog}/${schema}/${volume}/invoices/invoice_002.pdf', format => 'binaryFile')
+  FROM READ_FILES(
+    '/Volumes/' || :catalog || '/' || :schema || '/' || :volume || '/invoices/invoice_002.pdf',
+    format => 'binaryFile'
+  )
 )
 SELECT
   path,
-  ai_extract(parsed_content, '["invoice_number", "client_name", "date_of_issue"]') AS invoice_data
+  CAST(ai_extract(parsed_content, '["invoice_number", "client_name", "date_of_issue"]') AS STRING) AS invoice_data
   -- ai_extract(parsed_content, '[ /* your fields here */ ]') AS my_extract
 FROM parsed_docs;
 

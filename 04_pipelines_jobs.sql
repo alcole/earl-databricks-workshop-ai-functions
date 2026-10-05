@@ -22,7 +22,7 @@
 
 -- COMMAND ----------
 
-CREATE WIDGET TEXT catalog DEFAULT 'main';
+CREATE WIDGET TEXT catalog DEFAULT 'workspace';
 CREATE WIDGET TEXT schema DEFAULT 'workshop';
 CREATE WIDGET TEXT volume DEFAULT 'workshop_data';
 CREATE WIDGET TEXT query_id DEFAULT '';
@@ -33,8 +33,8 @@ CREATE WIDGET TEXT query_id DEFAULT '';
 -- MAGIC ## 3.1 Save the classify query
 -- MAGIC
 -- MAGIC Run the cell below to preview the query in this notebook — it's the same `ai_classify` query
--- MAGIC from `02_ai_functions.sql`, just parameterized with `:catalog` / `:schema` instead of widgets
--- MAGIC (SQL Editor queries use `:name` parameter markers, not the `${name}` notebook-widget syntax).
+-- MAGIC from `02_ai_functions.sql`, parameterized with `:catalog` / `:schema` markers — the same
+-- MAGIC `:name` syntax works both here (bound to the widgets) and in the SQL Editor (as query parameters).
 
 -- COMMAND ----------
 
@@ -57,6 +57,7 @@ LIMIT 25;
 
 -- COMMAND ----------
 
+-- DBTITLE 1,Cell 6
 -- MAGIC %md
 -- MAGIC Now save it as a query object so a Job can reference it:
 -- MAGIC
@@ -82,13 +83,14 @@ LIMIT 25;
 -- MAGIC    ```
 -- MAGIC 3. The SQL Editor auto-detects the `:catalog` and `:schema` markers and offers them as **query
 -- MAGIC    parameters** in a panel on the right — set their default values to match the widgets above
--- MAGIC    (e.g. `main` / `workshop`). This matters: a Job runs unattended, so the query needs usable
+-- MAGIC    (e.g. `workspace` / `workshop`). This matters: a Job runs unattended, so the query needs usable
 -- MAGIC    defaults rather than relying on someone typing values into a prompt.
--- MAGIC 4. Pick the same SQL warehouse you've been using, then **Save As** — give it a name like
--- MAGIC    `workshop-classify-complaints`.
--- MAGIC 5. Open the saved query's **⋮ menu → Query details** (or check the browser URL) to find its
--- MAGIC    **query ID** — a UUID like `aefb3f51-a752-436e-b0ab-2923880bee52`.
--- MAGIC 6. Paste that ID into the `query_id` widget at the top of this notebook, then re-run from here.
+-- MAGIC 4. Pick the same SQL warehouse you've been using, then **Save As** — give it the **exact** name
+-- MAGIC    `workshop-classify-complaints`. The code in section 3.2 looks up the query by this name, so the
+-- MAGIC    spelling must match.
+-- MAGIC
+-- MAGIC That's it — no need to hunt for a UUID. The next section finds the saved query by name
+-- MAGIC automatically using the Databricks SDK.
 -- MAGIC
 -- MAGIC This is the one part of the pipeline that has to happen by hand in the UI — there's no
 -- MAGIC notebook cell that can create a SQL Editor query on your behalf.
@@ -114,6 +116,7 @@ LIMIT 25;
 
 -- COMMAND ----------
 
+-- DBTITLE 1,Cell 10
 -- MAGIC %python
 -- MAGIC import time
 -- MAGIC from databricks.sdk import WorkspaceClient
@@ -122,11 +125,15 @@ LIMIT 25;
 -- MAGIC catalog = dbutils.widgets.get("catalog")
 -- MAGIC schema = dbutils.widgets.get("schema")
 -- MAGIC volume = dbutils.widgets.get("volume")
--- MAGIC query_id = dbutils.widgets.get("query_id")
--- MAGIC
--- MAGIC assert query_id, "Set the query_id widget to the UUID of the query you saved in 3.1 first."
--- MAGIC
 -- MAGIC w = WorkspaceClient()
+-- MAGIC
+-- MAGIC # Find the saved query by name so workshop attendees don't have to hunt for a UUID.
+-- MAGIC query_id = dbutils.widgets.get("query_id")
+-- MAGIC if not query_id:
+-- MAGIC     _matching = [q for q in w.queries.list() if q.name == "workshop-classify-complaints"]
+-- MAGIC     assert _matching, "No query named 'workshop-classify-complaints' found. Save it in the SQL Editor first (see step 3.1)."
+-- MAGIC     query_id = _matching[0].id
+-- MAGIC     print(f"Auto-detected query_id: {query_id}")
 -- MAGIC
 -- MAGIC # Reuse whichever SQL warehouse is already running this notebook's queries, rather than
 -- MAGIC # hardcoding an ID that would only be valid in one workspace.
@@ -140,6 +147,10 @@ LIMIT 25;
 -- MAGIC             sql_task=jobs.SqlTask(
 -- MAGIC                 query=jobs.SqlTaskQuery(query_id=query_id),
 -- MAGIC                 warehouse_id=warehouse_id,
+-- MAGIC                 parameters={
+-- MAGIC                     "catalog": catalog,
+-- MAGIC                     "schema": schema,
+-- MAGIC                 },
 -- MAGIC             ),
 -- MAGIC         )
 -- MAGIC     ],
@@ -187,6 +198,7 @@ LIMIT 25;
 
 -- COMMAND ----------
 
+-- DBTITLE 1,Cell 12
 -- MAGIC %python
 -- MAGIC trigger_job = w.jobs.create(
 -- MAGIC     name=f"workshop-classify-on-arrival-{schema}",
@@ -196,6 +208,10 @@ LIMIT 25;
 -- MAGIC             sql_task=jobs.SqlTask(
 -- MAGIC                 query=jobs.SqlTaskQuery(query_id=query_id),
 -- MAGIC                 warehouse_id=warehouse_id,
+-- MAGIC                 parameters={
+-- MAGIC                     "catalog": catalog,
+-- MAGIC                     "schema": schema,
+-- MAGIC                 },
 -- MAGIC             ),
 -- MAGIC         )
 -- MAGIC     ],

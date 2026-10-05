@@ -138,7 +138,7 @@ You work in the Workspace; Unity Catalog decides what shows up there.
 ## Four objects you'll meet
 
 <div class="arch-stack">
-  <div class="arch-row neutral">Catalog — <code>main</code></div>
+  <div class="arch-row neutral">Catalog — <code>workspace</code></div>
   <div class="arch-arrow">↓</div>
   <div class="arch-row neutral">Schema — <code>workshop</code></div>
   <div class="arch-arrow">↓</div>
@@ -160,7 +160,7 @@ Highlighted: the three object types we'll actually touch today.
 
 - **Catalog Explorer** — browse by eye: catalog → schema → table/volume
 - **Search** — find objects by name or description across the workspace
-- **Query it directly** — `SHOW TABLES IN main.workshop` works from any notebook cell or the SQL editor
+- **Query it directly** — `SHOW TABLES IN workspace.workshop` works from any notebook cell or the SQL editor
 
 We'll use all three today.
 
@@ -174,7 +174,7 @@ Every table on Databricks has a three-part address — catalog, then schema, the
 
 <div class="ns-chain">
   <div class="ns-box">
-    <div class="ns-value">main</div>
+    <div class="ns-value">workspace</div>
     <div class="ns-label">catalog</div>
   </div>
   <div class="ns-sep">.</div>
@@ -192,7 +192,7 @@ Every table on Databricks has a three-part address — catalog, then schema, the
 Today's notebook widgets default to the first two parts, so every notebook runs as-is:
 
 ```
-catalog = main
+catalog = workspace
 schema  = workshop
 ```
 
@@ -261,15 +261,15 @@ build over the complaints table later. Same "Genie" branding, different products
 
 Open **`01_ingest_data.sql`** and work through it top to bottom:
 
-- The early cells create the `main.workshop` schema + volume
-- At the `LIST` cell: upload `complaints_sample.csv` — already in your cloned files — into
-  the Volume via Catalog Explorer's **Upload** button, then re-run `LIST` to confirm it landed
-- Continue through the rest — loads 831 sample complaints into `main.workshop.complaints`
+- The early cells create the `workspace.workshop` schema + volume
+- The next cell copies `complaints_sample.csv` and `invoices_workshop.zip` from your cloned
+  files into the Volume and unzips the invoices — no manual upload needed
+- Continue through the rest — loads 831 sample complaints into `workspace.workshop.complaints`
 
-<!-- Speaker note: this one needs active attention for the upload step, it's not a pure
-background task — budget real time for it here rather than assuming it runs itself while you
-talk through Block 2. Once it's done, Block 2's governed-table demo can still run as planned,
-and by Block 3 everyone's table is ready. -->
+<!-- Speaker note: the copy cell falls back to an error asking for a manual upload via Catalog
+Explorer if it can't find the files in the cloned Git folder — keep an eye out for that. Once
+it's done, Block 2's governed-table demo can still run as planned, and by Block 3 everyone's
+table is ready. -->
 
 ---
 
@@ -297,7 +297,7 @@ and by Block 3 everyone's table is ready. -->
     <div class="arch-option">SQL</div>
   </div>
   <div class="arch-arrow">↓</div>
-  <div class="arch-row governed">Unity Catalog — governed table (e.g. main.workshop.complaints)</div>
+  <div class="arch-row governed">Unity Catalog — governed table (e.g. workspace.workshop.complaints)</div>
   <div class="arch-arrow">↓</div>
   <div class="arch-row consumers">AI functions · Genie · Dashboards · Jobs — everything else today</div>
 </div>
@@ -505,9 +505,8 @@ a text column.
 3. **Chunk** (`ai_prep_search`) — splits into semantic chunks for vector search indexing
    *(Beta, requires DBR 18.2+ — slide-only today, not verified on Free Edition)*
 
-Hands-on companion: `03_document_exploration.sql`. Same upload step as Block 1 — upload
-`invoices_workshop.zip` (already in your cloned files) into the Volume before running it; the
-notebook unzips it for you from there.
+Hands-on companion: `03_document_exploration.sql`. The invoice PDFs are already in your
+Volume — `01_ingest_data.sql` copied and unzipped them in Block 1.
 
 ---
 
@@ -613,7 +612,7 @@ WHERE element:type = 'text';
 Genie is a click-through, no-SQL way to query a table — point it at data once, then just type questions.
 
 - No notebook for this one — everything happens in the Databricks UI
-- Needs `main.workshop.complaints` to exist, so **`01_ingest_data.sql`** must have run first
+- Needs `workspace.workshop.complaints` to exist, so **`01_ingest_data.sql`** must have run first
 - Under the hood it's still writing and running SQL — Genie shows you the query it used
 
 ---
@@ -632,7 +631,7 @@ Genie is a click-through, no-SQL way to query a table — point it at data once,
 
 1. Sidebar: **+ New** → **Genie Agent**
 2. Title it, e.g. `Complaints Explorer`
-3. **Add tables** → browse to `main` → `workshop` → `complaints` → add it
+3. **Add tables** → browse to `workspace` → `workshop` → `complaints` → add it
 4. Pick the SQL warehouse you've used all day
 5. **Create** — a chat panel opens
 
@@ -663,7 +662,7 @@ Four questions, verified against a real agent — not hypothetical:
 
 ## If you get stuck
 
-- **Empty or generic answer** — double-check you added `main.workshop.complaints`, not a
+- **Empty or generic answer** — double-check you added `workspace.workshop.complaints`, not a
   different catalog/schema
 - **A question about "categories" comes back empty** — there's no pre-computed category
   column; ask about `product` or `issue` instead, or run `02_ai_functions.sql`'s classify
@@ -685,7 +684,7 @@ A Lakeview/AI-BI dashboard built the same way you'd build one over any governed 
 - **By product** — which categories complain most
 - **Top 10 companies** — by complaint count
 
-Built directly against `main.workshop.complaints` — no new notebook, no new pipeline.
+Built directly against `workspace.workshop.complaints` — no new notebook, no new pipeline.
 
 ---
 

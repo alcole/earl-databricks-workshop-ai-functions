@@ -7,7 +7,7 @@
 -- To open it: sidebar → SQL Editor → use the workspace file browser to navigate to this
 -- file inside the Git folder you cloned, then open it. The :catalog / :schema markers
 -- below show up as fill-in widgets at the top of the editor the first time you run this —
--- set them to match whatever you used in 01_ingest_data.sql (defaults: main / workshop).
+-- set them to match whatever you used in 01_ingest_data.sql (defaults: workspace / workshop).
 
 -- Pick one of the functions below and point it at the data differently. A couple of ideas —
 -- pick one, or come up with your own:

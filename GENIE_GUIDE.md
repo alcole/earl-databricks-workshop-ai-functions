@@ -1,8 +1,8 @@
-# Genie Agent: ask `main.workshop.complaints` questions in plain English
+# Genie Agent: ask `workspace.workshop.complaints` questions in plain English
 
 Genie is a click-through, no-SQL way to ask natural-language questions of a table — you point
 it at data once, then just type questions. This activity isn't a notebook; everything happens in
-the Databricks UI. Complete `01_ingest_data.sql` first so `main.workshop.complaints` exists.
+the Databricks UI. Complete `01_ingest_data.sql` first so `workspace.workshop.complaints` exists.
 
 (Databricks recently renamed this feature from "Genie Space" to **Genie Agent** — same thing,
 newer name. You may still see "Genie Space" in older screenshots or docs.)
@@ -15,7 +15,7 @@ newer name. You may still see "Genie Space" in older screenshots or docs.)
    or search "Genie" in the sidebar search box if you don't see it directly).
 2. Give it a title, e.g. `Complaints Explorer`.
 3. Under the agent's data sources, click **Add tables** / **Add data**, and browse to
-   catalog `main` → schema `workshop` → table `complaints`. Add it.
+   catalog `workspace` → schema `workshop` → table `complaints`. Add it.
 4. Pick the SQL warehouse you've been using for the rest of the workshop.
 5. Click **Create** (or **Save**).
 6. A chat panel opens — type a question and hit enter.
@@ -28,7 +28,7 @@ newer name. You may still see "Genie Space" in older screenshots or docs.)
   (or the presenter) later manage an agent programmatically — in that case, list tables
   alphabetically by full name (`catalog.schema.table`).
 - **Genie can't find the table / gives an empty or generic answer** — double-check you added
-  `main.workshop.complaints` specifically, not a different catalog/schema. Use whatever
+  `workspace.workshop.complaints` specifically, not a different catalog/schema. Use whatever
   `catalog`/`schema` widget values you set in `01_ingest_data.sql`.
 - **A question about "categories" comes back empty** — the table doesn't have a pre-computed
   category column; `product` and `issue` are the closest real columns. Ask about those, or run

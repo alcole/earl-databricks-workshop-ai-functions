@@ -25,7 +25,7 @@
 
 -- COMMAND ----------
 
-CREATE WIDGET TEXT catalog DEFAULT 'main';
+CREATE WIDGET TEXT catalog DEFAULT 'workspace';
 CREATE WIDGET TEXT schema DEFAULT 'workshop';
 
 -- COMMAND ----------
@@ -111,24 +111,6 @@ LIMIT 15;
 -- MAGIC instead: sidebar → SQL Editor → open the workspace file browser → navigate to this file in
 -- MAGIC the Git folder you cloned. The `:catalog` / `:schema` markers show up as fill-in widgets there
 -- MAGIC too, same as in this notebook.
-
--- COMMAND ----------
-
--- DBTITLE 1,Try it yourself — SQL Editor version
--- MAGIC %md
--- MAGIC **Optional: Try this exercise in the SQL Editor**
--- MAGIC
--- MAGIC For a different experience with autocomplete, schema browser, and inline documentation, you can work on this same exercise in the SQL editor:
--- MAGIC
--- MAGIC 👉 **[Open sql_editor_explore.sql in SQL Editor](/editor/files/254331475145143)**
--- MAGIC
--- MAGIC The SQL editor provides:
--- MAGIC * Full autocomplete for table and column names
--- MAGIC * Schema browser panel
--- MAGIC * Inline function documentation on hover
--- MAGIC * Widget inputs at the top of the editor
--- MAGIC
--- MAGIC *Tip: Make sure to set the `:catalog` and `:schema` widget values to match what you used in the first notebook (defaults: `main` / `workshop`).*
 
 -- COMMAND ----------
 
