@@ -37,9 +37,10 @@ CREATE WIDGET TEXT volume DEFAULT 'workshop_data';
 
 -- COMMAND ----------
 
+-- DBTITLE 1,Cell 5
 SELECT
   path,
-  ai_parse_document(content, MAP('version', '2.0')) AS parsed
+  CAST(ai_parse_document(content, MAP('version', '2.0')) AS STRING) AS parsed
 FROM READ_FILES(
   '/Volumes/' || :catalog || '/' || :schema || '/' || :volume || '/invoices/invoice_001.pdf',
   format => 'binaryFile'
@@ -59,6 +60,7 @@ FROM READ_FILES(
 
 -- COMMAND ----------
 
+-- DBTITLE 1,Cell 7
 WITH parsed_docs AS (
   SELECT
     path,
@@ -70,7 +72,7 @@ WITH parsed_docs AS (
 )
 SELECT
   path,
-  ai_extract(parsed_content, '["invoice_number", "vendor_name", "total_amount"]') AS invoice_data
+  CAST(ai_extract(parsed_content, '["invoice_number", "vendor_name", "total_amount"]') AS STRING) AS invoice_data
 FROM parsed_docs;
 
 -- COMMAND ----------
@@ -89,6 +91,7 @@ FROM parsed_docs;
 
 -- COMMAND ----------
 
+-- DBTITLE 1,Cell 9
 -- TODO: point this at a different invoice file and/or extract different fields
 WITH parsed_docs AS (
   SELECT
@@ -101,7 +104,7 @@ WITH parsed_docs AS (
 )
 SELECT
   path,
-  ai_extract(parsed_content, '["invoice_number", "client_name", "date_of_issue"]') AS invoice_data
+  CAST(ai_extract(parsed_content, '["invoice_number", "client_name", "date_of_issue"]') AS STRING) AS invoice_data
   -- ai_extract(parsed_content, '[ /* your fields here */ ]') AS my_extract
 FROM parsed_docs;
 
